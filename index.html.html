@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Special Surprise</title>
+<style>
+:root{--bg:#eaf3ff;--pink:#1d5fd1;--soft:#cfe3ff;--ink:#1f3350;--card:#fafcff}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,"Times New Roman",serif;text-align:center;transition:background 1.2s}
+body.wish{background:#d4f1fb}
+section{padding:30px 15px;max-width:760px;margin:0 auto;clear:both}
+h1,h2{color:var(--pink);margin:0 0 10px}
+p{line-height:1.6;margin:6px auto;max-width:46ch}
+button{font:inherit;background:var(--pink);color:#fff;border:0;border-radius:12px;padding:12px 24px;cursor:pointer;font-weight:700}
+button:focus-visible,input:focus-visible{outline:3px solid #0b3a8a;outline-offset:3px}
+.card{background:var(--card);border-radius:20px;padding:26px;box-shadow:0 10px 30px #1d5fd122;margin:0 auto;position:relative;z-index:2}
+#lock{min-height:100vh;display:flex;align-items:center;justify-content:center}
+#lock .card{width:min(360px,100%);display:flex;flex-direction:column;gap:12px}
+#lock input{font:inherit;padding:11px;border:2px solid var(--soft);border-radius:10px;background:#fff;color:var(--ink);color-scheme:light}
+#err{color:#b0002f;min-height:1.3em;font-size:.95rem}
+.shake{animation:sh .4s}@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+#main{display:none}
+.cake{font-size:5rem;position:relative;display:inline-block}
+.cake .fl{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-size:1.6rem;animation:fl .4s infinite alternate}
+.cake.out .fl{display:none}
+@keyframes fl{to{transform:translateX(-50%) scale(1.15)}}
+#blow.done{background:#0e8aa8}
+.timeline{display:grid;gap:12px;text-align:left}
+.tl{background:var(--card);border-left:6px solid var(--pink);border-radius:12px;padding:14px 18px}
+.cd{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cd div{background:var(--card);border-radius:14px;padding:12px 16px;min-width:74px;box-shadow:0 6px 18px #0001}
+.cd b{display:block;font-size:1.8rem;color:var(--pink)}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+
+/* GALERIE NETTE ET ISOLÉE */
+.gal {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 15px;
+}
+@media (min-width: 600px) {
+  .gal {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.gal div {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: #d0e0f8;
+}
+.gal div img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+#envelope{cursor:pointer;font-size:1.1rem}
+.modal{position:fixed;inset:0;background:#0006;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}
+.modal.on{display:flex}
+.modal .card{max-width:520px;max-height:85vh;overflow:auto;text-align:left;white-space:pre-line}
+.pop{text-align:center}
+.heart{position:fixed;top:-30px;pointer-events:none;animation:fall linear forwards;z-index:1}
+@keyframes fall{to{transform:translateY(110vh) rotate(40deg);opacity:.2}}
+@media (prefers-reduced-motion:reduce){.heart,.cake .fl{animation:none}}
+</style>
+</head>
+<body>
+
+<section id="lock">
+  <div class="card" id="lockcard">
+    <div style="font-size:2.4rem">🔒</div>
+    <h1>🎁 Special Surprise 🎁</h1>
+    <p>Enter your birthdate to unlock your gift</p>
+    <input type="date" id="d" aria-label="Your birthdate">
+    <button id="go">Unlock My Gift</button>
+    <div id="err" role="alert"></div>
+    <div>✨ 💙 ✨</div>
+  </div>
+</section>
+
+<div id="main">
+  <section>
+    <h2>Make a Wish! ✨</h2>
+    <div class="cake" id="cake"><span class="fl">🕯️</span>🎂</div>
+    <p>Blow out the candle and make this year magical!</p>
+    <p><button id="blow">Blow the Candle</button></p>
+  </section>
+
+  <div id="after" style="display:none">
+    <section>
+      <h2>💙 Our Love Story</h2>
+      <div class="timeline">
+        <div class="tl"><b>The day we met</b><br>The moment everything started to change for me.</div>
+        <div class="tl"><b>Our first moments together</b><br>Every little memory is still my favorite.</div>
+        <div class="tl"><b>Today</b><br>Far apart, but closer than ever.</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Until your birthday</h2>
+      <div class="cd" id="cd"></div>
+      <p>Every second with you has been a blessing 💙</p>
+    </section>
+
+    <section>
+      <h2>💙 Reasons Why I Love You</h2>
+      <div class="grid3">
+        <div class="card"><div style="font-size:2rem">😊</div><p>You are truly special—a kind of person I've never found in another guy..</p></div>
+        <div class="card"><div style="font-size:2rem">🤝</div><p>You stand by me, no matter the distance.</p></div>
+        <div class="card"><div style="font-size:2rem">💙</div><p>Your kind heart makes me a better person.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Our Memories 📸</h2>
+      <div class="gal">
+        <div><img src="photo1.jpg" alt="Memory 1"></div>
+        <div><img src="photo2.jpg" alt="Memory 2"></div>
+        <div><img src="photo3.jpg" alt="Memory 3"></div>
+        <div><img src="photo4.jpg" alt="Memory 4"></div>
+        <div><img src="photo5.jpg" alt="Memory 5"></div>
+        <div><img src="photo6.jpg" alt="Memory 6"></div>
+        <div><img src="photo7.jpg" alt="Memory 7"></div>
+        <div><img src="photo8.jpg" alt="Memory 8"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="card" id="envelope" role="button" tabindex="0">
+        <div style="font-size:2.4rem">💌</div>
+        <b>Click to open my love letter</b>
+      </div>
+    </section>
+
+    <section>
+      <div class="card">
+        <h2>I Love You Forever! 💙</h2>
+        <p>May your day be as beautiful and wonderful as you are. Thank you for being the love of my life. 💙</p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="modal" id="letter">
+  <div class="card">
+    <div id="ltxt"></div>
+    <p style="text-align:center"><button id="close">Close &amp; Open Again</button></p>
+  </div>
+</div>
+
+<div class="modal" id="loved">
+  <div class="card pop">
+    <div style="font-size:2.6rem">💙</div>
+    <h2>You Are Loved!</h2>
+    <p>Every single day with you feels like a dream come true. You make my heart skip a beat, my face light up with a smile, and my life infinitely better. Thank you for being YOU! 💙</p>
+    <button id="ok">Close</button>
+  </div>
+</div>
+
+<script>
+var BIRTHDAY = "1998-10-08";
+var NAME = "PAPI";
+var LETTER = "Happy Birthday, " + NAME + "! 💙\n\nFirst of all, I just want to thank you for your love and for all the little moments that make my days brighter.\n\nI know I'm not the best at writing long sweet messages, but please know that my love for you is real. Even from far away, you are always in my heart.\n\nNo matter what happens, my love for you will never fade. I will always be here for you.\n\nHappy Birthday again, my love. 🎂\n\nForever yours.";
+
+var $=function(i){return document.getElementById(i)};
+
+function unlock(){
+  var v=$("d").value;
+  if(v===BIRTHDAY){$("lock").style.display="none";$("main").style.display="block";scrollTo(0,0);rain()}
+  else{$("err").textContent=v?"That's not the right date. Try again.":"Pick your birthdate first.";
+    var c=$("lockcard");c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake")}
+}
+$("go").onclick=unlock;
+$("d").onkeydown=function(e){if(e.key==="Enter")unlock()};
+
+$("blow").onclick=function(){
+  $("cake").classList.add("out");
+  this.textContent="💙 Wish Made!";this.classList.add("done");this.disabled=true;
+  document.body.classList.add("wish");
+  $("after").style.display="block";rain(40);
+  setTimeout(function(){$("after").scrollIntoView({behavior:"smooth"})},700);
+  tick();setInterval(tick,1000);
+};
+
+function tick(){
+  var n = new Date();
+  var p = BIRTHDAY.split("-");
+  var t = new Date(Date.UTC(n.getFullYear(), +p[1] - 1, +p[2], -3, 0, 0));
+  
+  if (n >= t) {
+    t = new Date(n.getFullYear() + 1, +p[1] - 1, +p[2], 0, 0, 0);
+  }
+  
+  var s = Math.floor((t - n) / 1000);
+  if (s < 0) s = 0;
+  
+  var u = [["days", 86400], ["hours", 3600], ["minutes", 60], ["seconds", 1]], h = "";
+  u.forEach(function(x){
+    h += "<div><b>" + Math.floor(s / x[1]) + "</b>" + x[0] + "</div>";
+    s %= x[1];
+  });
+  $("cd").innerHTML = h;
+}
+
+function openLetter(){$("letter").classList.add("on");var t=LETTER,i=0,e=$("ltxt");e.textContent="";
+  (function n(){if(i<t.length&&$("letter").classList.contains("on")){e.textContent+=t[i++];setTimeout(n,22)}})()}
+$("envelope").onclick=openLetter;
+$("envelope").onkeydown=function(e){if(e.key==="Enter"||e.key===" ")openLetter()};
+$("close").onclick=function(){$("letter").classList.remove("on");$("loved").classList.add("on")};
+$("ok").onclick=function(){$("loved").classList.remove("on")};
+
+function rain(n){
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+  var e=["💙","💙","💙","✨","🌊"];
+  for(var k=0;k<(n||25);k++){var h=document.createElement("div");h.className="heart";h.textContent=e[k%5];
+    h.style.left=Math.random()*100+"vw";h.style.fontSize=14+Math.random()*20+"px";
+    h.style.animationDuration=4+Math.random()*4+"s";h.style.animationDelay=Math.random()*2+"s";
+    document.body.appendChild(h);setTimeout(function(x){x.remove()},9000,h)}
+}
+</script>
+</body>
+</html>
